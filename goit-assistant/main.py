@@ -1,25 +1,26 @@
+import re
 
-def hello():
+def hello(*args):
     print("How can I help you?")
 
 
-def add_contact():
+def add_contact(*args):
     pass
 
 
-def change():
+def change(*args):
     pass
 
 
-def phone():
+def phone(*args):
     pass
 
 
-def show_all():
+def show_all(*args):
     pass
 
 
-def close():
+def close(*args):
     print("Good bye!")
     return True
 
@@ -37,12 +38,27 @@ commands = {
 }
 
 
-def assistant():
+def handler(string):
+    string = string.lower()
+    pattern = "^hello|^add|^change|^phone|^show all|^good bye|^close|^exit"
+    try:
+        command = re.search(pattern, string).group(0)
+        args = re.sub(pattern, "", string).split()
+    except ValueError:
+        print("Command input error")
+    except:
+        command, args = None, None
+        print("ERROR")
+    return command, args
+
+
+def main():
     good_bye = False
     while True:
-        command = input("Hello. Enter your command: ")
+        input_string = input("Hello. Enter your command: ")
+        command, args = handler(input_string)
         func = commands.get(command)
-        func()
+        func(args)
         good_bye = close()
         if good_bye:
             break
@@ -53,4 +69,4 @@ if __name__ == "__main__":
         "Ivan": "+380501234567",
         "Roman": "+3805039876543"
     }
-    assistant()
+    main()
