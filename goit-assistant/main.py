@@ -1,29 +1,35 @@
 import re
 
+
 def hello(*args):
-    print("How can I help you?")
+    return "How can I help you?"
 
 
 def add_contact(*args):
-    pass
+    name = args[0][0]
+    phone = args[0][1]
+    contacts.update({name: phone})
+    return f"{name}: {phone} was added"
 
 
 def change(*args):
-    pass
+    name = args[0][0]
+    phone = args[0][1]
+    contacts.update({name: phone})
+    return f"{name}: {phone} was updated"
 
 
 def phone(*args):
-    pass
+    name = args[0]
+    return contacts[name]
 
 
 def show_all(*args):
-    pass
+    return contacts
 
 
 def close(*args):
-    print("Good bye!")
-    return True
-
+    return "Good bye!"
 
 
 commands = {
@@ -31,19 +37,19 @@ commands = {
     "add": add_contact,
     "change": change,
     "phone": phone,
-    "show_all": show_all,
-    "good_bye": close,
+    "show all": show_all,
+    "good bye": close,
     "close": close,
     "exit": close
 }
 
 
 def handler(string):
-    string = string.lower()
     pattern = "^hello|^add|^change|^phone|^show all|^good bye|^close|^exit"
     try:
-        command = re.search(pattern, string).group(0)
-        args = re.sub(pattern, "", string).split()
+        command = re.search(pattern, string, re.IGNORECASE).group(0)
+        command = command.lower()
+        args = re.sub(pattern, "", string, re.IGNORECASE).split()
     except ValueError:
         print("Command input error")
     except:
@@ -52,15 +58,15 @@ def handler(string):
     return command, args
 
 
-def main():
+def main(contacts):
     good_bye = False
+    print("Hello. Enter your command: ")
     while True:
-        input_string = input("Hello. Enter your command: ")
+        input_string = input("=> ")
         command, args = handler(input_string)
         func = commands.get(command)
-        func(args)
-        good_bye = close()
-        if good_bye:
+        print(func(args))
+        if func.__name__ == "close":
             break
 
 
@@ -69,4 +75,4 @@ if __name__ == "__main__":
         "Ivan": "+380501234567",
         "Roman": "+3805039876543"
     }
-    main()
+    main(contacts)
