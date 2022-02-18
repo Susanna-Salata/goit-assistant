@@ -39,7 +39,7 @@ def change(*args):
 
 @input_error
 def phone(*args):
-    name = args[0]
+    name = args[0][0]
     return contacts[name]
 
 
