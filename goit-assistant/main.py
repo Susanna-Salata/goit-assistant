@@ -103,9 +103,10 @@ def main(contacts):
         command, args = handler(input_string)
         func = commands.get(command)
         if command:
-            print(func(args))
-            if func.__name__ == "close":
-                break
+            result = func(args)
+            print(result)
+        if result == "Good bye!":
+            break
 
 
 if __name__ == "__main__":
