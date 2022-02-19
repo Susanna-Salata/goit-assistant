@@ -1,4 +1,5 @@
 import re
+from book import *
 
 
 def input_error(func):
@@ -25,7 +26,8 @@ def hello(*args):
 def add_contact(*args):
     name = args[0][0]
     phone = args[0][1]
-    contacts.update({name: phone})
+    record = Record(name=name, phone=phone)
+    contacts.add_record(record)
     return f"{name}: {phone} was added"
 
 
@@ -33,7 +35,7 @@ def add_contact(*args):
 def change(*args):
     name = args[0][0]
     phone = args[0][1]
-    contacts.update({name: phone})
+    contacts[name].add_phone(phone)
     return f"{name}: {phone} was updated"
 
 
@@ -95,8 +97,7 @@ def handler(string):
     return command, args
 
 
-def main(contacts):
-    good_bye = False
+def main():
     print("Hello. Enter your command: ")
     while True:
         input_string = input("=> ")
@@ -109,9 +110,11 @@ def main(contacts):
             break
 
 
+
 if __name__ == "__main__":
-    contacts = {
-        "Ivan": {"phone": "+380501234567", "e-mail": "ivan@gmail.com"},
-        "Roman": {"phone": "+3805039876543", "e-mail": "roman@gmail.com"}
-    }
-    main(contacts)
+    contacts = AddressBook()
+    # contacts = {
+    #     "Ivan": {"phone": "+380501234567", "e-mail": "ivan@gmail.com"},
+    #     "Roman": {"phone": "+3805039876543", "e-mail": "roman@gmail.com"}
+    # }
+    main()
