@@ -111,7 +111,7 @@ def main(contacts):
 
 if __name__ == "__main__":
     contacts = {
-        "Ivan": "+380501234567",
-        "Roman": "+3805039876543"
+        "Ivan": {"phone": "+380501234567", "e-mail": "ivan@gmail.com"},
+        "Roman": {"phone": "+3805039876543", "e-mail": "roman@gmail.com"}
     }
     main(contacts)
