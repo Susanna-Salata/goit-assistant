@@ -29,17 +29,15 @@ class Record:
         self.birthday = ""
 
     def add_phone(self, phone):
-        self.phone.value.append(phone)
+        self.phone.append(Phone(phone))
 
-    def add_phones(self, phones):
-        self.phone.value.extend(phones)
-
-    def remove_phone(self, phone):
-        index = self.phone.index(phone)
-        self.phone.value.pop(index)
+    # def remove_phone(self, phone):
+    #     index = self.phone.index(phone)
+    #     self.phone.pop(index)
 
     def __repr__(self):
-        return f"{self.name.value}: {self.phone.value} {self.birthday.value}"
+        phones = [p.value for p in self.phone]
+        return f"{self.name.value}: {phones} {self.birthday.value}"
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
