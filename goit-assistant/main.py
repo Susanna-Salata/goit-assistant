@@ -46,6 +46,13 @@ def phone(*args):
 
 
 @input_error
+def birthday(*args):
+    name = args[0][0]
+    birthday = args[0][1]
+    contacts[name].add_birthday(birthday)
+    return f"{name}: {birthday} was updated"
+
+@input_error
 def show_all(*args):
     return contacts
 
@@ -63,6 +70,7 @@ def help_instructions(*args):
     "add": add Sasha +380505550055,
     "change": change Sasha +380505550000,
     "phone": phone Sasha,
+    "birthday": birthday Sasha 03.03.1985,
     "show all": show all,
     "good bye": good bye,
     "close": close,
@@ -75,6 +83,7 @@ commands = {
     "add": add_contact,
     "change": change,
     "phone": phone,
+    "birthday": birthday,
     "show all": show_all,
     "good bye": close,
     "close": close,
@@ -84,7 +93,7 @@ commands = {
 
 
 def handler(string):
-    pattern = "^hello|^add|^change|^phone|^show all|^good bye|^close|^exit|^help"
+    pattern = "^hello|^add|^change|^phone|^birthday|^show all|^good bye|^close|^exit|^help"
     try:
         command = re.search(pattern, string, re.IGNORECASE).group(0)
         command = command.lower()
