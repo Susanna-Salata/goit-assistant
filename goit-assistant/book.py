@@ -12,7 +12,7 @@ class AddressBook(UserDict):
 
 class Record:
 
-    def __init__(self, name, phone=[]):
+    def __init__(self, name, phone):
         self.name = Name(name)
         self.phone = Phone(phone)
 
@@ -29,6 +29,7 @@ class Record:
     def __repr__(self):
         return f"{self.name.value}: {self.phone.value}"
 
+
 class Field():
     name = None
     value = None
@@ -44,10 +45,9 @@ class Name(Field):
 
 class Phone(Field):
     name = "phone"
-    value = []
     is_mandatory = False
 
-    def __init__(self, phone=[]):
+    def __init__(self, phone):
         if isinstance(phone, list):
             self.value = phone
         else:
