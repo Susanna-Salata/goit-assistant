@@ -25,7 +25,7 @@ class Record:
 
     def __init__(self, name, phone):
         self.name = Name(name)
-        self.phone = Phone(phone)
+        self.phone = [Phone(phone)]
         self.birthday = ""
 
     def add_phone(self, phone):
@@ -72,10 +72,7 @@ class Phone(Field):
     is_mandatory = False
 
     def __init__(self, phone):
-        if isinstance(phone, list):
-            self.value = phone
-        else:
-            self.value = [phone]
+        self.value = phone
 
 
 class Birthday(Field):
