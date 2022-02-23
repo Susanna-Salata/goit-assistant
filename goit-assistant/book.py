@@ -1,6 +1,7 @@
 from collections import UserDict, UserString, UserList
 from datetime import datetime
 import datetime as dt
+import re
 
 
 class AddressBook(UserDict):
@@ -59,7 +60,17 @@ class Record:
 
 
 class Field():
-    pass
+
+    def __init__(self):
+        self.__value = None
+
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        self.__value = value
 
 
 class Name(Field):
@@ -72,14 +83,43 @@ class Name(Field):
 class Phone(Field):
 
     def __init__(self, phone, is_mandatory=False):
-        self.value = phone
+        self.__value = self.check(phone)
         self.is_mandatory = is_mandatory
+
+    def check(self, value):
+        pattern = "^\+[0-9]{12}$"
+        if re.match(pattern, value):
+            return value
+        else:
+            raise ValueError
+
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        self.__value = self.check(value)
 
 
 class Birthday(Field):
 
     def __init__(self, date, is_mandatory=False):
-        self.value = datetime.strptime(date, "%d.%m.%Y")
+        self.__value = self.check(date)
         self.is_mandatory = is_mandatory
+
+    def check(self, value):
+        try:
+            return datetime.strptime(value, "%d.%m.%Y")
+        except:
+            raise ValueError
+
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        self.__value = self.check(value)
 
 
