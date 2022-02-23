@@ -7,29 +7,35 @@ class AddressBook(UserDict):
     index = 0
 
     def add_record(self, record):
-        self.data.update({record.name.value: record})
+        self.data.update({record.name.name: record})
 
     def remove_record(self, name):
         del self.data[name]
 
     def iterator(self, N=2):
         page = {}
+        items_left = len(self.data)-self.index
+        if items_left < N:
+            N = items_left
         for i in range(N):
             element = self.data[self.data.keys()[self.index+i]]
             page.update(element)
             self.index += 1
-        yield element
+        yield page
 
 
 class Record:
 
-    def __init__(self, name, phone):
+    def __init__(self, name, *args):
         self.name = Name(name)
-        self.phone = [Phone(phone)]
+        self.phone = []
+        for item in args[0]:
+            self.phone.append(Phone(item))
         self.birthday = ""
 
-    def add_phone(self, phone):
-        self.phone.append(Phone(phone))
+    def add_phone(self, *args):
+        for item in args[0]:
+            self.phone.append(Phone(item))
 
     # def remove_phone(self, phone):
     #     index = self.phone.index(phone)
@@ -37,7 +43,7 @@ class Record:
 
     def __repr__(self):
         phones = [p.value for p in self.phone]
-        return f"{self.name.value}: {phones} {self.birthday.value}"
+        return f"{self.name.name}: {phones} {self.birthday.value}"
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
@@ -53,30 +59,27 @@ class Record:
 
 
 class Field():
-    name = None
-    value = None
-    is_mandatory = True
+    pass
 
 
 class Name(Field):
-    name = "name"
 
-    def __init__(self, name):
-        self.value = name
+    def __init__(self, name="Bob", is_mandatory=True):
+        self.name = name
+        self.is_mandatory = is_mandatory
 
 
 class Phone(Field):
-    name = "phone"
-    is_mandatory = False
 
-    def __init__(self, phone):
+    def __init__(self, phone, is_mandatory=False):
         self.value = phone
+        self.is_mandatory = is_mandatory
 
 
 class Birthday(Field):
-    name = "birthday"
 
-    def __init__(self, date):
+    def __init__(self, date, is_mandatory=False):
         self.value = datetime.strptime(date, "%d.%m.%Y")
+        self.is_mandatory = is_mandatory
 
 

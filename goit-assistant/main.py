@@ -25,8 +25,8 @@ def hello(*args):
 @input_error
 def add_contact(*args):
     name = args[0][0]
-    phone = args[0][1]
-    record = Record(name=name, phone=phone)
+    phone = args[0][1:]
+    record = Record(name, phone)
     contacts.add_record(record)
     return f"{name}: {phone} was added"
 
@@ -34,7 +34,7 @@ def add_contact(*args):
 @input_error
 def change(*args):
     name = args[0][0]
-    phone = args[0][1]
+    phone = args[0][1:]
     contacts[name].add_phone(phone)
     return f"{name}: {phone} was updated"
 
@@ -67,7 +67,7 @@ def help_instructions(*args):
     return """ 
     Please select any command from listed below with examples:
     "hello": hello,
-    "add": add Sasha +380505550055,
+    "add": add Sasha +380505550055 +380505550099,
     "change": change Sasha +380505550000,
     "phone": phone Sasha,
     "birthday": birthday Sasha 03.03.1985,
