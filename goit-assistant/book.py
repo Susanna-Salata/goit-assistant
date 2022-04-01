@@ -44,7 +44,10 @@ class Record:
 
     def __repr__(self):
         phones = [p.value for p in self.phone]
-        return f"{self.name.name}: {phones} {self.birthday.value.strftime('%d.%m.%Y')}"
+        if self.birthday:
+            return f"{self.name.name}: {phones} {self.birthday.value}"
+        else:
+            return f"{self.name.name}: {phones}"
 
     def add_birthday(self, birthday):
         self.birthday = birthday
@@ -119,7 +122,10 @@ class Birthday(Field):
 
     @property
     def value(self):
-        return self.__value
+        if self.__value:
+            return self.__value.strftime('%d.%m.%Y')
+        else:
+            return ""
 
     @value.setter
     def value(self, value):
