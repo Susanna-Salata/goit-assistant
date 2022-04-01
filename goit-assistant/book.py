@@ -28,15 +28,15 @@ class AddressBook(UserDict):
 class Record:
 
     def __init__(self, name, *args):
-        self.name = Name(name)
+        self.name = name
         self.phone = []
         for item in args[0]:
-            self.phone.append(Phone(item))
+            self.phone.append(item)
         self.birthday = ""
 
     def add_phone(self, *args):
         for item in args[0]:
-            self.phone.append(Phone(item))
+            self.phone.append(item)
 
     # def remove_phone(self, phone):
     #     index = self.phone.index(phone)
@@ -44,10 +44,10 @@ class Record:
 
     def __repr__(self):
         phones = [p.value for p in self.phone]
-        return f"{self.name.name}: {phones} {self.birthday.value}"
+        return f"{self.name.name}: {phones} {self.birthday.value.strftime('%d.%m.%Y')}"
 
     def add_birthday(self, birthday):
-        self.birthday = Birthday(birthday)
+        self.birthday = birthday
 
     def days_to_birthday(self):
         if self.birthday.timetuple().tm_yday > datetime.today().date().timetuple().tm_yday:
@@ -113,6 +113,9 @@ class Birthday(Field):
             return datetime.strptime(value, "%d.%m.%Y")
         except:
             raise ValueError
+
+    def __repr__(self):
+        return str(self.__value)
 
     @property
     def value(self):

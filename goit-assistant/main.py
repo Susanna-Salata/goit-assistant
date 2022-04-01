@@ -25,7 +25,8 @@ def hello(*args):
 def add_contact(*args):
     name = args[0][0]
     phone = args[0][1:]
-    record = Record(name, phone)
+    phones = [Phone(p) for p in phone]
+    record = Record(Name(name), phones)
     contacts.add_record(record)
     return f"{name}: {phone} was added"
 
@@ -34,7 +35,8 @@ def add_contact(*args):
 def change(*args):
     name = args[0][0]
     phone = args[0][1:]
-    contacts[name].add_phone(phone)
+    phones = [Phone(p) for p in phone]
+    contacts[name].add_phone(phones)
     return f"{name}: {phone} was updated"
 
 
@@ -48,7 +50,7 @@ def phone(*args):
 def birthday(*args):
     name = args[0][0]
     birthday = args[0][1]
-    contacts[name].add_birthday(birthday)
+    contacts[name].add_birthday(Birthday(birthday))
     return f"{name}: {birthday} was updated"
 
 @input_error
@@ -69,7 +71,7 @@ def help_instructions(*args):
     "add": add Sasha +380505550055 +380505550099,
     "change": change Sasha +380505550000,
     "phone": phone Sasha,
-    "birthday": birthday Sasha 03.03.1985,
+    "birthday": birthday Sasha 03.05.1985,
     "show all": show all,
     "good bye": good bye,
     "close": close,
