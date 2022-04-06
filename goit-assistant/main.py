@@ -31,20 +31,24 @@ def add_contact(*args):
     return f"{name}: {phone} was added"
 
 
+# @input_error
+# def change(*args):
+#     name = args[0][0]
+#     phone = args[0][1:]
+#     phones = [Phone(p) for p in phone]
+#     contacts[name].add_phone(phones)
+#     return f"{name}: {phone} was updated"
+
 @input_error
 def change(*args):
     name = args[0][0]
-    phone = args[0][1:]
-    phones = [Phone(p) for p in phone]
-    contacts[name].add_phone(phones)
-    return f"{name}: {phone} was updated"
-
+    contacts.change_record(name)
+    return f"{contacts[name]} was updated"
 
 @input_error
 def phone(*args):
     name = args[0][0]
     return contacts[name]
-
 
 @input_error
 def birthday(*args):
@@ -69,7 +73,7 @@ def help_instructions(*args):
     Please select any command from listed below with examples:
     "hello": hello,
     "add": add Sasha +380505550055 +380505550099,
-    "change": change Sasha +380505550000,
+    "change": change Sasha, change_phone, 0
     "phone": phone Sasha,
     "birthday": birthday Sasha 03.05.1985,
     "show all": show all,

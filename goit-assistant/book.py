@@ -13,6 +13,19 @@ class AddressBook(UserDict):
     def remove_record(self, name):
         del self.data[name]
 
+    def change_record(self, name):
+        print(self.data[name])
+        command_1 = input("Select 'delete_phone' or 'change_phone': \n=> ")
+        command_2 = input("Select index for phone: \n=> ")
+        command_2 = int(command_2)
+        if command_1 == "delete_phone":
+            self.data[name].remove_phone(command_2)
+        elif command_1 == "change_phone":
+            command_3 = input("Type new phone: \n=> ")
+            self.data[name].replace_phone(command_2, Phone(command_3))
+        else:
+            print("Unknown command")
+
     def iterator(self, N=2):
         page = {}
         items_left = len(self.data)-self.index
@@ -38,9 +51,14 @@ class Record:
         for item in args[0]:
             self.phone.append(item)
 
-    # def remove_phone(self, phone):
-    #     index = self.phone.index(phone)
-    #     self.phone.pop(index)
+    def remove_phone(self, index):
+        self.phone.pop(index)
+
+    def replace_phone(self, index, phone):
+        self.phone[index] = phone
+
+    def change_phone(self, index, phone):
+        self.phone[index] = phone
 
     def __repr__(self):
         phones = [p.value for p in self.phone]
