@@ -13,18 +13,11 @@ class AddressBook(UserDict):
     def remove_record(self, name):
         del self.data[name]
 
-    def change_record(self, name):
-        print(self.data[name])
-        command_1 = input("Select 'delete_phone' or 'change_phone': \n=> ")
-        command_2 = input("Select index for phone: \n=> ")
-        command_2 = int(command_2)
-        if command_1 == "delete_phone":
-            self.data[name].remove_phone(command_2)
-        elif command_1 == "change_phone":
-            command_3 = input("Type new phone: \n=> ")
-            self.data[name].replace_phone(command_2, Phone(command_3))
-        else:
-            print("Unknown command")
+    def change_record(self, name, phone_old, phone_new):
+        self.data[name.name].replace_phone(phone_old, phone_new)
+
+    def remove_record_phone(self, name, phone_old):
+        self.data[name.name].remove_phone(phone_old)
 
     def iterator(self, N=2):
         page = {}
@@ -51,11 +44,13 @@ class Record:
         for item in args[0]:
             self.phone.append(item)
 
-    def remove_phone(self, index):
+    def remove_phone(self, phone):
+        index = self.phone.index(phone)
         self.phone.pop(index)
 
-    def replace_phone(self, index, phone):
-        self.phone[index] = phone
+    def replace_phone(self, phone_old, phone_new):
+        index = self.phone.index(phone_old)
+        self.phone[index] = phone_new
 
     def change_phone(self, index, phone):
         self.phone[index] = phone
@@ -121,6 +116,9 @@ class Phone(Field):
     @value.setter
     def value(self, value):
         self.__value = self.check(value)
+
+    def __eq__(self, other):
+        return self.__value == other.value
 
 
 class Birthday(Field):

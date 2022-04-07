@@ -31,24 +31,29 @@ def add_contact(*args):
     return f"{name}: {phone} was added"
 
 
-# @input_error
-# def change(*args):
-#     name = args[0][0]
-#     phone = args[0][1:]
-#     phones = [Phone(p) for p in phone]
-#     contacts[name].add_phone(phones)
-#     return f"{name}: {phone} was updated"
-
 @input_error
 def change(*args):
     name = args[0][0]
-    contacts.change_record(name)
+    phone = args[0][1:]
+    phones = [Phone(p) for p in phone]
+    contacts.change_record(Name(name), phones[0], phones[1])
     return f"{contacts[name]} was updated"
+
+
+@input_error
+def remove(*args):
+    name = args[0][0]
+    phone = args[0][1:]
+    phones = [Phone(p) for p in phone]
+    contacts.remove_record_phone(Name(name), phones[0])
+    return f"{contacts[name]} was updated"
+
 
 @input_error
 def phone(*args):
     name = args[0][0]
     return contacts[name]
+
 
 @input_error
 def birthday(*args):
@@ -56,6 +61,7 @@ def birthday(*args):
     birthday = args[0][1]
     contacts[name].add_birthday(Birthday(birthday))
     return f"{name}: {birthday} was updated"
+
 
 @input_error
 def show_all(*args):
@@ -73,7 +79,8 @@ def help_instructions(*args):
     Please select any command from listed below with examples:
     "hello": hello,
     "add": add Sasha +380505550055 +380505550099,
-    "change": change Sasha, change_phone, 0
+    "change": change Sasha +380505550055 +380505550000
+    "remove": remove Sasha +380505550055
     "phone": phone Sasha,
     "birthday": birthday Sasha 03.05.1985,
     "show all": show all,
@@ -87,6 +94,7 @@ commands = {
     "hello": hello,
     "add": add_contact,
     "change": change,
+    "remove": remove,
     "phone": phone,
     "birthday": birthday,
     "show all": show_all,
@@ -98,7 +106,7 @@ commands = {
 
 
 def handler(string):
-    pattern = "^hello|^add|^change|^phone|^birthday|^show all|^good bye|^close|^exit|^help"
+    pattern = "^hello|^add|^change|^remove|^phone|^birthday|^show all|^good bye|^close|^exit|^help"
     try:
         command = re.search(pattern, string, re.IGNORECASE).group(0)
         command = command.lower()
