@@ -69,6 +69,12 @@ def show_all(*args):
 
 
 @input_error
+def search(*args):
+    query = args[0][0]
+    return contacts.search(query)
+
+
+@input_error
 def close(*args):
     contacts.save()
     return "Good bye!"
@@ -85,6 +91,7 @@ def help_instructions(*args):
     "phone": phone Sasha,
     "birthday": birthday Sasha 03.05.1985,
     "show all": show all,
+    "search": search Sas,
     "good bye": good bye,
     "close": close,
     "exit": exit,
@@ -99,6 +106,7 @@ commands = {
     "phone": phone,
     "birthday": birthday,
     "show all": show_all,
+    "search": search,
     "good bye": close,
     "close": close,
     "exit": close,
@@ -107,7 +115,7 @@ commands = {
 
 
 def handler(string):
-    pattern = "^hello|^add|^change|^remove|^phone|^birthday|^show all|^good bye|^close|^exit|^help"
+    pattern = "^hello|^add|^change|^remove|^phone|^birthday|^show all|^search|^good bye|^close|^exit|^help"
     try:
         command = re.search(pattern, string, re.IGNORECASE).group(0)
         command = command.lower()

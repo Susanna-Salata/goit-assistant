@@ -37,12 +37,18 @@ class AddressBook(UserDict):
         with open(file_path, "wb") as file:
             pickle.dump(self.data, file)
 
-
     def load(self):
         file_path = os.path.join(os.getcwd(), "address_book.bin")
         with open(file_path, "rb") as file:
             self.data = pickle.load(file)
         print("__")
+
+    def search(self, query):
+        result = AddressBook()
+        for key, value in self.data.items():
+            if query in str(value):
+                result.add_record(value)
+        return result
 
 
 class Record:
