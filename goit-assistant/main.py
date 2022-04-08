@@ -70,6 +70,7 @@ def show_all(*args):
 
 @input_error
 def close(*args):
+    contacts.save()
     return "Good bye!"
 
 
@@ -120,6 +121,11 @@ def handler(string):
 
 
 def main():
+    global contacts
+    contacts = AddressBook()
+    to_load = input("Do you want to load existing AddressBook? y/n: ")
+    if to_load == "y":
+        contacts.load()
     print("Hello. Enter your command: ")
     while True:
         input_string = input("=> ")
@@ -134,7 +140,6 @@ def main():
 
 
 if __name__ == "__main__":
-    contacts = AddressBook()
     # contacts = {
     #     "Ivan": {"phone": "+380501234567", "e-mail": "ivan@gmail.com"},
     #     "Roman": {"phone": "+3805039876543", "e-mail": "roman@gmail.com"}

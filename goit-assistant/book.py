@@ -2,6 +2,8 @@ from collections import UserDict, UserString, UserList
 from datetime import datetime
 import datetime as dt
 import re
+import os
+import pickle
 
 
 class AddressBook(UserDict):
@@ -29,6 +31,18 @@ class AddressBook(UserDict):
             page.update(element)
             self.index += 1
         yield page
+
+    def save(self):
+        file_path = os.path.join(os.getcwd(), "address_book.bin")
+        with open(file_path, "wb") as file:
+            pickle.dump(self.data, file)
+
+
+    def load(self):
+        file_path = os.path.join(os.getcwd(), "address_book.bin")
+        with open(file_path, "rb") as file:
+            self.data = pickle.load(file)
+        print("__")
 
 
 class Record:
