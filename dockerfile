@@ -1,4 +1,4 @@
-FROM python:slim-buster
+FROM python:3.9.13-slim-buster
 
 MAINTAINER Susanna Salata "susanna.kiev@gmail.com"
 
