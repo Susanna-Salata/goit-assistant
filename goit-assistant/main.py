@@ -12,6 +12,8 @@ def input_error(func):
             print(f"Incorrect value provided")
         except IndexError:
             print(f"Not enough arguments")
+        except NameError:
+            pass
         return result
     return inner
 
@@ -37,7 +39,7 @@ def change(*args):
     phone = args[0][1:]
     phones = [Phone(p) for p in phone]
     contacts.change_record(Name(name), phones[0], phones[1])
-    return f"{contacts[name]} was updated"
+    return f"{name} was updated"
 
 
 @input_error
@@ -46,11 +48,17 @@ def remove(*args):
     phone = args[0][1:]
     phones = [Phone(p) for p in phone]
     contacts.remove_record_phone(Name(name), phones[0])
-    return f"{contacts[name]} was updated"
+    return f"{name} was updated"
 
 
 @input_error
 def phone(*args):
+    name = args[0][0]
+    return contacts[name]
+
+
+@input_error
+def email(*args):
     name = args[0][0]
     return contacts[name]
 
@@ -65,7 +73,7 @@ def birthday(*args):
 
 @input_error
 def show_all(*args):
-    return contacts
+    return print(contacts)
 
 
 @input_error
@@ -85,10 +93,11 @@ def help_instructions(*args):
     return """ 
     Please select any command from listed below with examples:
     "hello": hello,
-    "add": add Sasha +380505550055 +380505550099,
+    "add": add Sasha +380505550055 +380505550099
     "change": change Sasha +380505550055 +380505550000
     "remove": remove Sasha +380505550055
     "phone": phone Sasha,
+    "email": e-mail Sasha,
     "birthday": birthday Sasha 03.05.1985,
     "show all": show all,
     "search": search Sas,
@@ -104,6 +113,7 @@ commands = {
     "change": change,
     "remove": remove,
     "phone": phone,
+    "email": email,
     "birthday": birthday,
     "show all": show_all,
     "search": search,
@@ -131,9 +141,9 @@ def handler(string):
 def main():
     global contacts
     contacts = AddressBook()
-    to_load = input("Do you want to load existing AddressBook? y/n: ")
-    if to_load == "y":
-        contacts.load()
+    # to_load = input("Do you want to load existing AddressBook? y/n: ")
+    # if to_load == "y":
+    #     contacts.load()
     print("Hello. Enter your command: ")
     while True:
         input_string = input("=> ")
@@ -149,7 +159,7 @@ def main():
 
 if __name__ == "__main__":
     # contacts = {
-    #     "Ivan": {"phone": "+380501234567", "e-mail": "ivan@gmail.com"},
-    #     "Roman": {"phone": "+3805039876543", "e-mail": "roman@gmail.com"}
+    #     "Ivan": {"phone": "+380501234567", "email": "ivan@gmail.com"},
+    #     "Roman": {"phone": "+3805039876543", "email": "roman@gmail.com"}
     # }
     main()

@@ -5,43 +5,79 @@ import re
 import os
 import pickle
 
+from models import Contact, Phone as PhoneDB, Email as EmailDB
+
+from sqlalchemy.engine import create_engine
+from sqlalchemy.orm import sessionmaker
+
+engine = create_engine("sqlite:///../addressbook.db")
+Session = sessionmaker(bind=engine)
+session = Session()
+
 
 class AddressBook(UserDict):
     index = 0
 
     def add_record(self, record):
-        self.data.update({record.name.name: record})
+        session.add(record.contact)
+        session.commit()
+
+    # def add_record(self, record):
+    #     self.data.update({record.name.name: record})
 
     def remove_record(self, name):
-        del self.data[name]
+        session.query(Contact).filter_by(name=name.name).delete()
+        session.commit()
 
     def change_record(self, name, phone_old, phone_new):
-        self.data[name.name].replace_phone(phone_old, phone_new)
+        contact_ids = session.query(Contact.id).\
+            filter(Contact.name == name.name)
+        contact_ids = [c.id for c in contact_ids]
+        session.query(PhoneDB).\
+            filter(PhoneDB.phone == phone_old.value,
+                   PhoneDB.contact_id.in_(contact_ids)).\
+            update({'phone': phone_new.value})
+        session.commit()
 
     def remove_record_phone(self, name, phone_old):
-        self.data[name.name].remove_phone(phone_old)
+        contact_ids = session.query(Contact.id). \
+            filter(Contact.name == name.name)
+        contact_ids = [c.id for c in contact_ids]
+        session.query(PhoneDB). \
+            filter(PhoneDB.phone == phone_old.value,
+                   PhoneDB.contact_id.in_(contact_ids)). \
+            delete()
+        session.commit()
 
     def iterator(self, N=2):
         page = {}
-        items_left = len(self.data)-self.index
+        data = session.query(Contact).execute().fetch_all()
+        items_left = len(data)-self.index
         if items_left < N:
             N = items_left
         for i in range(N):
-            element = self.data[self.data.keys()[self.index+i]]
+            element = data[data.keys()[self.index+i]]
             page.update(element)
             self.index += 1
         yield page
 
-    def save(self):
-        file_path = os.path.join(os.getcwd(), "address_book.bin")
-        with open(file_path, "wb") as file:
-            pickle.dump(self.data, file)
+    def __repr__(self):
+        for c in session.query(Contact):
+            return(f'{c.name}: {c.birthday}\n phones: {c.phones} \n emails: {c.emails}')
 
-    def load(self):
-        file_path = os.path.join(os.getcwd(), "address_book.bin")
-        with open(file_path, "rb") as file:
-            self.data = pickle.load(file)
-        print("__")
+    def __str__(self):
+        return self.__repr__()
+
+    # def save(self):
+    #     file_path = os.path.join(os.getcwd(), "address_book.bin")
+    #     with open(file_path, "wb") as file:
+    #         pickle.dump(self.data, file)
+    #
+    # def load(self):
+    #     file_path = os.path.join(os.getcwd(), "address_book.bin")
+    #     with open(file_path, "rb") as file:
+    #         self.data = pickle.load(file)
+    #     print("__")
 
     def search(self, query):
         result = AddressBook()
@@ -56,9 +92,13 @@ class Record:
     def __init__(self, name, *args):
         self.name = name
         self.phone = []
-        for item in args[0]:
-            self.phone.append(item)
+        self.email = []
         self.birthday = ""
+        self.contact = Contact(name=self.name.name)
+        for item in args[0]:
+            new_phone = PhoneDB(phone=item.value)
+            self.contact.phones.append(new_phone)
+
 
     def add_phone(self, *args):
         for item in args[0]:
@@ -75,12 +115,28 @@ class Record:
     def change_phone(self, index, phone):
         self.phone[index] = phone
 
+    def add_email(self, *args):
+        for item in args[0]:
+            self.email.append(item)
+
+    def remove_email(self, email):
+        index = self.email.index(email)
+        self.email.pop(index)
+
+    def replace_email(self, email_old, email_new):
+        index = self.email.index(email_old)
+        self.email[index] = email_new
+
+    def change_email(self, index, email):
+        self.email[index] = email
+
     def __repr__(self):
         phones = [p.value for p in self.phone]
+        emails = [p.value for p in self.email]
         if self.birthday:
-            return f"{self.name.name}: {phones} {self.birthday.value}"
+            return f"{self.name.name}: {phones} {emails} {self.birthday.value}"
         else:
-            return f"{self.name.name}: {phones}"
+            return f"{self.name.name}: {phones} {emails}"
 
     def add_birthday(self, birthday):
         self.birthday = birthday
@@ -167,4 +223,26 @@ class Birthday(Field):
     def value(self, value):
         self.__value = self.check(value)
 
+class Email(Field):
 
+    def __init__(self, email, is_mandatory=False):
+        self.__value = self.check(email)
+        self.is_mandatory = is_mandatory
+
+    def check(self, value):
+        pattern = "[0-9A-Za-z\.\_\-]+@[0-9A-Za-z\.\-]+\.[A-Za-z]+$"
+        if re.match(pattern, value):
+            return value
+        else:
+            raise ValueError
+
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        self.__value = self.check(value)
+
+    def __eq__(self, other):
+        return self.__value == other.value
