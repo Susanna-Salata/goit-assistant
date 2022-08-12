@@ -5,6 +5,9 @@ import re
 import os
 import pickle
 
+from mongo.models import Record as RecordDB, Phone as PhoneTag
+import mongo.connect
+
 
 class AddressBook(UserDict):
     index = 0
@@ -16,10 +19,20 @@ class AddressBook(UserDict):
         del self.data[name]
 
     def change_record(self, name, phone_old, phone_new):
-        self.data[name.name].replace_phone(phone_old, phone_new)
+        phones = RecordDB(name=name)[0].get('phones')
+        phones = [str(p) for p in phones if str(p) != phone_old.value] + [phone_new.value]
+
+        RecordDB(name=name).update_one({'$set': {
+    'phones': [PhoneTag(phone=p) for p in phones]}}
+            , upsert=False, multi=False)
 
     def remove_record_phone(self, name, phone_old):
-        self.data[name.name].remove_phone(phone_old)
+        phones = RecordDB(name=name)[0].get('phones')
+        phones = [str(p) for p in phones if str(p) != phone_old.value]
+
+        RecordDB(name=name).update_one({'$set': {
+            'phones': [PhoneTag(phone=p) for p in phones]}}
+            , upsert=False, multi=False)
 
     def iterator(self, N=2):
         page = {}
@@ -32,16 +45,17 @@ class AddressBook(UserDict):
             self.index += 1
         yield page
 
-    def save(self):
-        file_path = os.path.join(os.getcwd(), "address_book.bin")
-        with open(file_path, "wb") as file:
-            pickle.dump(self.data, file)
+    # def save(self):
+    #     file_path = os.path.join(os.getcwd(), "address_book.bin")
+    #     with open(file_path, "wb") as file:
+    #         pickle.dump(self.data, file)
+    #
+    # def load(self):
+    #     file_path = os.path.join(os.getcwd(), "address_book.bin")
+    #     with open(file_path, "rb") as file:
+    #         self.data = pickle.load(file)
+    #     print("__")
 
-    def load(self):
-        file_path = os.path.join(os.getcwd(), "address_book.bin")
-        with open(file_path, "rb") as file:
-            self.data = pickle.load(file)
-        print("__")
 
     def search(self, query):
         result = AddressBook()
@@ -56,9 +70,11 @@ class Record:
     def __init__(self, name, *args):
         self.name = name
         self.phone = []
-        for item in args[0]:
-            self.phone.append(item)
-        self.birthday = ""
+        self.birthday = datetime(1970, 1, 1).date()
+        self.contact = RecordDB(name=name,
+                                birthday=Birthday(self.birthday),
+                                phones=[PhoneTag(item) for item in args[0]]
+                                ).save()
 
     def add_phone(self, *args):
         for item in args[0]:

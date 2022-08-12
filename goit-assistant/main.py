@@ -131,9 +131,9 @@ def handler(string):
 def main():
     global contacts
     contacts = AddressBook()
-    to_load = input("Do you want to load existing AddressBook? y/n: ")
-    if to_load == "y":
-        contacts.load()
+    # to_load = input("Do you want to load existing AddressBook? y/n: ")
+    # if to_load == "y":
+    #     contacts.load()
     print("Hello. Enter your command: ")
     while True:
         input_string = input("=> ")

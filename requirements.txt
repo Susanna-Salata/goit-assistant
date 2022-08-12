@@ -1,3 +1,6 @@
 pandas
 redis
 redis_lru
+pymongo
+mongoengine
+configparser
