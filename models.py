@@ -5,9 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey, Table
 from sqlalchemy.sql.sqltypes import DateTime
+from connect import Base, engine, db_session
 
-
-Base = declarative_base()
+# Base = declarative_base()
 
 
 class Contact(Base):
@@ -19,6 +19,9 @@ class Contact(Base):
     phones = relationship("Phone", back_populates="contact")
     emails = relationship("Email", back_populates="contact")
 
+    def __repr__(self):
+        return f"{self.id}: {self.name}\nbirthday:{self.birthday}\nphones: {[str(p) for p in self.phones]}\ne-mals: {[str(e) for e in self.emails]}\n================================================================================"
+
 
 class Phone(Base):
     __tablename__ = "phones"
@@ -28,6 +31,9 @@ class Phone(Base):
 
     contact = relationship("Contact", back_populates="phones")
 
+    def __repr__(self):
+        return f'{self.phone}'
+
 
 class Email(Base):
     __tablename__ = "emails"
@@ -36,3 +42,6 @@ class Email(Base):
     contact_id = Column(Integer, ForeignKey(Contact.id, ondelete="CASCADE"))
 
     contact = relationship("Contact", back_populates="emails")
+
+    def __repr__(self):
+        return f'{self.email}'
